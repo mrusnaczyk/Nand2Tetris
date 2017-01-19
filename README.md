@@ -1,3 +1,5 @@
 # Nand2Tetris
 Solution set to Nand2Tetris assignments
-##Hi
+
+###Chapter 1 :: Elementary Logic Gates
+*Coming soon to a repository new you!
