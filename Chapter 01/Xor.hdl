@@ -14,12 +14,11 @@ CHIP Xor {
 
     PARTS:
 	//NOT both inputs
-    	Nand(a=a,b=a,out=a0);
-	Nand(a=b,b=b,out=b0);
+    	Nand(a=a,b=b,out=c);
 
 	//NAND !A with B and A with !B
-	Nand(a=a0,b=b,out=a1);
-	Nand(a=a,b=b0,out=b1);
+	Nand(a=a,b=c,out=a1);
+	Nand(a=c,b=b,out=b1);
 
 	//NAND the outputs
 	Nand(a=a1,b=b1,out=out);
