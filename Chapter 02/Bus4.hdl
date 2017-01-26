@@ -1,0 +1,12 @@
+CHIP Bus4{
+IN
+	a,b,c,d;
+OUT
+	out[4];
+
+PARTS:
+	And(a=a,b=a,out=out[0]);
+	And(a=b,b=b,out=out[1]);
+	And(a=c,b=c,out=out[2]);
+	And(a=d,b=d,out=out[3]);
+}
