@@ -6,3 +6,6 @@ Solution set to Nand2Tetris assignments
 
 ###Chapter 02 :: Boolean Arithmetic and the ALU
 - Adders, and incrementer, and the ALU  
+
+###Chapter 03 :: Sequential Chips
+- Coming soon...
