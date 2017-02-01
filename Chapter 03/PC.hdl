@@ -1,0 +1,44 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/PC.hdl
+
+/**
+ * A 16-bit counter with load and reset control bits.
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
+ * else                    out[t+1] = out[t]
+ */
+
+CHIP PC {
+    IN in[16],load,inc,reset;
+    OUT out[16];
+
+    PARTS:
+	/*
+	* Note to self:
+	* Since inc has least precedence compared to the load and reset bits, we generate this first.
+	* Then, compare to load. Since load is prioritized over inc, we use the input instead 
+	* of the incremented counter value. Then, check if the reset bit is set. Since reset has 		* highest priority, it overrides any of the other selection bits.
+	*/
+	
+	//Load or Increment
+	Inc16(in=outTemp,out=outIncTemp);
+	Mux16(a=outIncTemp,b=in,sel=load,out=InputOrInc);
+	
+	//Input or Reset
+	Mux16(a=InputOrInc,b=false,sel=reset,out=InputOrReset);
+
+	//If either load, increment, or reset bits is set, set load bit on register
+	Or(a=load,b=inc,out=LoadOrInc);
+	Or(a=LoadOrInc,b=reset,out=LoadOrReset);
+
+	//Store
+	Register(in=InputOrReset,load=LoadOrReset,out=outTemp,out=out); 
+
+	
+		
+	
+    
+}
