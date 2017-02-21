@@ -8,4 +8,13 @@ Solution set to Nand2Tetris assignments
 - Adders, and incrementer, and the ALU  
 
 ###Chapter 03 :: Sequential Chips
-- Coming soon...
+- Registers and RAM of various capacities
+
+###Chapter 04 :: Rise of the Machine Language
+- Fill.asm :: Fills a screen
+- Mult.asm :: Multiplies
+
+###Chapter 05 :: Computer 
+- A computer!
+
+
