@@ -20,5 +20,5 @@ Solution set to Nand2Tetris assignments
 ###Chapter 06 :: Assembler
 - An assembler!
 - To use, run the program with the name of the target assemly file as the argument
-.. *- Ex: `java -jar Assembler.jar Add.asm`
-.. * Alternatively, the program arguments can be added and run in Eclipse or another IDE
+⋅⋅ - Ex: `java -jar Assembler.jar Add.asm`
+⋅⋅ - Alternatively, the program arguments can be added and run in Eclipse or another IDE
