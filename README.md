@@ -19,6 +19,11 @@ Solution set to Nand2Tetris assignments
 
 ###Chapter 06 :: Assembler
 - An assembler!
-- To use, run the program with the name of the target assemly file as the argument
+- To use, run the program with the name of the target assembly file as the argument
 - Ex: `java -jar Assembler.jar Add.asm`
+- Alternatively, the program arguments can be added and run in Eclipse or another IDE
+
+###Chapter 07 :: Translator Part 1
+- To use, run the program with the name of the target VM file as the argument
+- Ex: `java -jar Translator.jar Howdy.vm`
 - Alternatively, the program arguments can be added and run in Eclipse or another IDE
