@@ -1,0 +1,30 @@
+class Main{
+	function void main(){
+		var Game g;
+		do Main.splashScreen();
+		let g = Game.new();
+		do g.start();
+		do Main.main();
+		return;
+	}
+
+	function void splashScreen(){
+		var char currKey;
+		let currKey = 0;
+
+		do Output.moveCursor(5,26);
+		do Output.printString("Flippy Byte");
+		do Output.moveCursor(8,22);
+		do Output.printString("Press Space to Start");
+		do Output.moveCursor(9,22);
+		do Output.printString("Press Up Key to Fly");
+
+
+		while(~(currKey = 32)){
+			let currKey = Keyboard.keyPressed();
+		}
+
+		return;
+	}
+
+}

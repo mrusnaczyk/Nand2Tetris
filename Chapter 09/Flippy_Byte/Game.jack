@@ -1,0 +1,104 @@
+class Game{
+  field char UP_KEY, DOWN_KEY;
+  field boolean start, lastWallReady, isColliding;
+  field Wall w;
+  field Array walls;
+  field int wallIndex, numWalls, i, playerX, playerY;
+  field Player player;
+  field char currKey;
+
+  static int seedling;
+
+
+  constructor Game new(){
+    let UP_KEY = 131;
+    let DOWN_KEY = 133;
+
+    let start = false;
+    let numWalls = 5;
+    let wallIndex = 0;
+    let walls = Array.new(numWalls);
+    let walls[0] = Wall.new(491);
+    let seedling = 10;
+
+    let currKey = 0;
+
+    let player = Player.new(50,100);
+
+    return this;
+  }
+  method void start(){
+		while(true){
+      /**Check if up key was pressed**/
+			let currKey = Keyboard.keyPressed();
+			if(currKey = UP_KEY){
+				do player.movePlayer(5);
+			}else{
+				do player.movePlayer(-7);
+			}
+
+			do player.drawPlayer();
+
+			if(wallIndex < (numWalls - 1)){
+				let w = walls[wallIndex];
+				let lastWallReady = w.readyNewWall();
+				if(lastWallReady){
+					let wallIndex = wallIndex + 1;
+					let walls[wallIndex] = Wall.new(491);
+					let w = walls[wallIndex];
+					do w.setSeed(seedling);
+					do w.newWallHeight();
+				}
+			}
+
+      /**Move walls and check for collitions**/
+			let playerX = player.getXLocation();
+			let playerY = player.getYLocation();
+			let i = 0;
+			while(i < (wallIndex + 1)){
+				let w = walls[i];
+				do w.moveWall();
+				let isColliding = w.isColliding(playerX, playerY);
+				if(isColliding){
+            do failScreen();
+						return;
+				}
+				do player.incrementScore(2);
+				let i = i + 1;
+			}
+
+      /**Update the seed**/
+			if(seedling < 40){
+				let seedling = seedling + 1;
+			}else {
+				let seedling = 1;
+			}
+
+			do player.drawPlayer();
+
+			do Sys.wait(50);
+			do Screen.clearScreen();
+
+		}
+
+		return;
+	}
+
+  method void failScreen(){
+    do Screen.clearScreen();
+    do Output.moveCursor(10,20);
+    do Output.printString("You lost! Your score was:");
+    do Output.moveCursor(11,30);
+    do Output.printInt(player.getScore());
+
+    do Sys.wait(2000);
+
+    do Screen.clearScreen();
+    return;
+  }
+
+	function int getSteps(){
+		return seedling;
+	}
+
+}

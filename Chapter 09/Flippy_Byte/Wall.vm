@@ -1,0 +1,198 @@
+function Wall.new 0
+push constant 8
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 0
+push constant 20
+add
+pop this 1
+push constant 0
+pop this 7
+push constant 0
+pop this 2
+push constant 10
+pop this 3
+push constant 254
+pop this 4
+push constant 255
+pop this 5
+push pointer 0
+return
+function Wall.readyNewWall 0
+push argument 0
+pop pointer 0
+push this 0
+push constant 392
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+goto IF_END0
+label IF_FALSE0
+push constant 0
+return
+label IF_END0
+function Wall.isColliding 0
+push argument 0
+pop pointer 0
+push argument 1
+push constant 15
+add
+push this 0
+gt
+push argument 1
+push constant 15
+add
+push this 1
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 2
+push constant 15
+sub
+push this 3
+lt
+push argument 2
+push constant 15
+add
+push this 4
+gt
+or
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+not
+return
+label IF_FALSE1
+label IF_FALSE0
+push constant 0
+return
+function Wall.moveWall 0
+push argument 0
+pop pointer 0
+push this 0
+push constant 19
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 0
+push constant 5
+sub
+pop this 0
+push this 1
+push constant 5
+sub
+pop this 1
+goto IF_END0
+label IF_FALSE0
+push pointer 0
+call Game.getSteps 0
+call Wall.setSeed 2
+pop temp 0
+push pointer 0
+call Wall.newWallHeight 1
+pop temp 0
+push constant 491
+pop this 0
+push constant 511
+pop this 1
+label IF_END0
+push pointer 0
+call Wall.drawWall 1
+pop temp 0
+push constant 0
+return
+function Wall.drawWall 0
+push argument 0
+pop pointer 0
+push this 0
+push this 2
+push this 1
+push this 3
+call Screen.drawRectangle 4
+pop temp 0
+push this 0
+push this 4
+push this 1
+push this 5
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+return
+function Wall.setSeed 0
+push argument 0
+pop pointer 0
+push this 6
+push constant 2
+call Math.divide 2
+push argument 1
+add
+push constant 2
+call Math.multiply 2
+push constant 5
+add
+push constant 4
+call Math.divide 2
+pop this 6
+label WHILE_EXP0
+push this 6
+push constant 120
+gt
+not
+if-goto WHILE_END0
+push this 6
+push constant 10
+sub
+pop this 6
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function Wall.newWallHeight 0
+push argument 0
+pop pointer 0
+push constant 0
+pop this 2
+push constant 255
+pop this 5
+push this 7
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 3
+push this 6
+sub
+push constant 20
+add
+pop this 3
+push constant 205
+push this 6
+sub
+pop this 4
+push constant 0
+pop this 7
+goto IF_END0
+label IF_FALSE0
+push constant 50
+push this 6
+add
+pop this 3
+push this 4
+push this 6
+sub
+pop this 4
+push constant 0
+not
+pop this 7
+label IF_END0
+push constant 0
+return

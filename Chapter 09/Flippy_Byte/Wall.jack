@@ -1,0 +1,99 @@
+class Wall{
+  field int x1, x2, y1Top, y2Top, y1Bottom, y2Bottom, heightSeed;
+  field boolean clearancePlacement;
+
+  /**Walls are always 20px wide and the height is determined by a
+  * Pseudo-Pseudo-PRNG */
+  constructor Wall new(int x){
+    //do setSeed(seed);
+
+    let x1 = x;
+    let x2 = x + 20;
+
+    let clearancePlacement = false;
+    let y1Top = 0;
+    let y2Top = 10;
+    let y1Bottom = 254;
+    let y2Bottom = 255;
+
+    return this;
+  }
+
+  method boolean readyNewWall(){
+    if(x1 < 392){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  method boolean isColliding(int x, int y){
+    if(((x+15) > x1) & ((x+15) < x2)){
+      if(((y-15) < y2Top) | ((y+15) > y1Bottom)){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /*Moves the wall to the left by 20px.
+  *
+  * If the wall is close to the left border of the screen,
+  * it is reset to the beginning and assigned a new height
+  * and gap.*/
+  method void moveWall(){
+    if(x1 > 19){
+      let x1 = x1 - 5;
+      let x2 = x2 - 5;
+    }else{
+      do setSeed(Game.getSteps());
+      do newWallHeight();
+
+      let x1 = 491;
+      let x2 = 511;
+    }
+
+    do drawWall();
+    return;
+  }
+
+  //Draw the wall on the screen
+  method void drawWall(){
+    do Screen.drawRectangle(x1,y1Top,x2,y2Top);
+    do Screen.drawRectangle(x1,y1Bottom,x2,y2Bottom);
+
+    return;
+  }
+
+  /*Computes a seed used to determine the configuration of the wall.
+  * A not-so-great attempt at pseudo-pseudo-pseudo-randomness (There's definitely
+  * a pattern here). */
+  method void setSeed(int seed){
+    let heightSeed = (heightSeed/2 + seed*2 + 5)/4;
+    while(heightSeed > 120){
+      let heightSeed = heightSeed - 10;
+    }
+
+    return;
+  }
+
+
+  //Assign the wall a new height
+  method void newWallHeight(){
+    let y1Top = 0;
+    let y2Bottom = 255;
+
+    if(clearancePlacement){
+      let y2Top = y2Top - heightSeed + 20;
+      let y1Bottom = 205 - heightSeed;
+      let clearancePlacement = false;
+    }else{
+      let y2Top = 50 + heightSeed;
+      let y1Bottom = y1Bottom - heightSeed;
+      let clearancePlacement = true;
+    }
+
+    return;
+  }
+}
