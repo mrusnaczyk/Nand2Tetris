@@ -1,4 +1,5 @@
 class Main{
+	/*Starts up the splash screen and prepares a new instance of the game.*/
 	function void main(){
 		var Game g;
 		do Main.splashScreen();
@@ -8,6 +9,7 @@ class Main{
 		return;
 	}
 
+	/*Main menu splash screen. Returns after the player presses space*/
 	function void splashScreen(){
 		var char currKey;
 		let currKey = 0;
@@ -19,7 +21,7 @@ class Main{
 		do Output.moveCursor(9,22);
 		do Output.printString("Press Up Key to Fly");
 
-
+		//32 = ASCII_SPACE
 		while(~(currKey = 32)){
 			let currKey = Keyboard.keyPressed();
 		}

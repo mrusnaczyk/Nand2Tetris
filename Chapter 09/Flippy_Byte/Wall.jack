@@ -37,7 +37,7 @@ class Wall{
     return false;
   }
 
-  /*Moves the wall to the left by 20px.
+  /*Moves the wall to the left by 5px.
   *
   * If the wall is close to the left border of the screen,
   * it is reset to the beginning and assigned a new height

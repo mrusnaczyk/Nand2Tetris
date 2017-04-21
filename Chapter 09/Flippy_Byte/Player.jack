@@ -1,8 +1,8 @@
 class Player{
-  field int x, y, score, xRow;
+  field int x, y, score;
 
-  /** Create a new Player and initialize it at (x,y),
-   *  the top left corner of the sprite */
+  /*Creates a new Player and initialize it at (x,y),
+  * the top left corner of the sprite */
   constructor Player new(int a, int b){
     let x = a;
     let y = b;
@@ -11,14 +11,14 @@ class Player{
     return this;
   }
 
-  /**
-  * Update player location by 'x' pixels horizontally and
+  /*Update player location by 'x' pixels horizontally and
   * 'y' pixels vertically */
   method void movePlayer(int yChange){
     let y = y - yChange;
     return;
   }
 
+  /*Draws the player and their score on the screen*/
   method void drawPlayer(){
     //The x and y coordinates represent the center of the character
     if((y+15) > 255){
@@ -28,24 +28,30 @@ class Player{
       let y = 15;
     }
     do Screen.drawRectangle((x-15),(y-15),(x+15),(y+15));
+
+    //Draw score
     do Output.moveCursor(0,0);
     do Output.printInt(score);
     return;
   }
 
+  /*Increments the player's score by a specified amount.*/
   method void incrementScore(int amount){
     let score = score + amount;
     return;
   }
 
+  /*Returns the player's current score.*/
   method int getScore(){
     return score;
   }
 
+  /*Returns the X-coordinate of the player's current position*/
   method int getXLocation(){
     return x;
   }
 
+  /*Returns the Y-coordinate of the player's current position*/
   method int getYLocation(){
     return y;
   }

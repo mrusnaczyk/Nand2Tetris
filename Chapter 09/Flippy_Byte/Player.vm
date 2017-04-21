@@ -1,5 +1,5 @@
 function Player.new 0
-push constant 4
+push constant 3
 call Memory.alloc 1
 pop pointer 0
 push argument 0

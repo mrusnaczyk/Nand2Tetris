@@ -1,18 +1,17 @@
 class Game{
-  field char UP_KEY, DOWN_KEY;
-  field boolean start, lastWallReady, isColliding;
-  field Wall w;
-  field Array walls;
-  field int wallIndex, numWalls, i, playerX, playerY;
-  field Player player;
-  field char currKey;
+field char UP_KEY, currKey;
+field boolean start, lastWallReady, isColliding;
+field int wallIndex, numWalls, i, playerX, playerY;
 
-  static int seedling;
+field Wall w;
+field Array walls;
+field Player player;
 
+static int seedling;
 
+  /*Sets up necessary fields for the game, as well as the player object.*/
   constructor Game new(){
     let UP_KEY = 131;
-    let DOWN_KEY = 133;
 
     let start = false;
     let numWalls = 5;
@@ -27,63 +26,67 @@ class Game{
 
     return this;
   }
+
+  /*Starts the main game loop. Continues until the player collides with a wall.*/
   method void start(){
-		while(true){
-      /**Check if up key was pressed**/
-			let currKey = Keyboard.keyPressed();
-			if(currKey = UP_KEY){
-				do player.movePlayer(5);
-			}else{
-				do player.movePlayer(-7);
-			}
+    while(true){
+      /**Check if up key was pressed, and if so, move the player**/
+      let currKey = Keyboard.keyPressed();
+      if(currKey = UP_KEY){
+        do player.movePlayer(5);
+      }else{
+        do player.movePlayer(-7);
+      }
 
-			do player.drawPlayer();
+      if(wallIndex < (numWalls - 1)){
+        let w = walls[wallIndex];
+        let lastWallReady = w.readyNewWall();
+        if(lastWallReady){
+          let wallIndex = wallIndex + 1;
+          let walls[wallIndex] = Wall.new(491);
+          let w = walls[wallIndex];
+          do w.setSeed(seedling);
+          do w.newWallHeight();
+        }
+      }
 
-			if(wallIndex < (numWalls - 1)){
-				let w = walls[wallIndex];
-				let lastWallReady = w.readyNewWall();
-				if(lastWallReady){
-					let wallIndex = wallIndex + 1;
-					let walls[wallIndex] = Wall.new(491);
-					let w = walls[wallIndex];
-					do w.setSeed(seedling);
-					do w.newWallHeight();
-				}
-			}
+      /*Move walls and check for collitions*/
+      let playerX = player.getXLocation();
+      let playerY = player.getYLocation();
+      let i = 0;
+      while(i < (wallIndex + 1)){
+        let w = walls[i];
+        do w.moveWall();
 
-      /**Move walls and check for collitions**/
-			let playerX = player.getXLocation();
-			let playerY = player.getYLocation();
-			let i = 0;
-			while(i < (wallIndex + 1)){
-				let w = walls[i];
-				do w.moveWall();
-				let isColliding = w.isColliding(playerX, playerY);
-				if(isColliding){
-            do failScreen();
-						return;
-				}
-				do player.incrementScore(2);
-				let i = i + 1;
-			}
+        let isColliding = w.isColliding(playerX, playerY);
+        if(isColliding){
+          do failScreen();
+          return;
+        }
+
+        /*If no collision was detected, award the player some points and continue.*/
+        do player.incrementScore(2);
+        let i = i + 1;
+      }
 
       /**Update the seed**/
-			if(seedling < 40){
-				let seedling = seedling + 1;
-			}else {
-				let seedling = 1;
-			}
+      if(seedling < 40){
+        let seedling = seedling + 1;
+      }else {
+        let seedling = 1;
+      }
 
-			do player.drawPlayer();
+      //The player is drawn last because the score needs to written overany other objects on the screen
+      do player.drawPlayer();
 
-			do Sys.wait(50);
-			do Screen.clearScreen();
+      do Sys.wait(50);
+      do Screen.clearScreen();
+    }
 
-		}
+    return;
+  }
 
-		return;
-	}
-
+  /*Displayed when the player collides with a wall, along with a score.*/
   method void failScreen(){
     do Screen.clearScreen();
     do Output.moveCursor(10,20);
@@ -91,14 +94,17 @@ class Game{
     do Output.moveCursor(11,30);
     do Output.printInt(player.getScore());
 
+    //Give the player some time to read the message
     do Sys.wait(2000);
 
     do Screen.clearScreen();
     return;
   }
 
-	function int getSteps(){
-		return seedling;
-	}
+  /*Returns the number of steps taken in the game. Used in Wall.jack to generate
+  * a not-so-random number */
+  function int getSteps(){
+    return seedling;
+  }
 
 }
