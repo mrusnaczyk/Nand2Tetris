@@ -23,7 +23,7 @@ Solution set to Nand2Tetris assignments
 - Ex: `java -jar Assembler.jar Add.asm`
 - Alternatively, the program arguments can be added and run in Eclipse or another IDE
 
-###Chapter 07 :: Translator Part 1
+###Chapter 07/08 :: Translator
 - To use, run the program with the name of the target VM file as the argument
 - Ex: `java -jar Translator.jar Howdy.vm`
 - Note: programs with multiple VM files can be translated by passing any of the files to the translator, however, the resulting file will be named the same as the file name passed. A modification to the test scripts may be needed. (Sorry!)
