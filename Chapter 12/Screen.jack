@@ -1,0 +1,203 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+
+
+class Screen {
+  static boolean color;
+  static Array powersTwo;
+
+  /** Initializes the Screen. */
+  function void init() {
+    let color = true;
+
+    let powersTwo = Array.new(16);
+    let powersTwo[0]  = 1;
+    let powersTwo[1]  = 2;
+    let powersTwo[2]  = 4;
+    let powersTwo[3]  = 8;
+    let powersTwo[4]  = 16;
+    let powersTwo[5]  = 32;
+    let powersTwo[6]  = 64;
+    let powersTwo[7]  = 128;
+    let powersTwo[8]  = 256;
+    let powersTwo[9]  = 512;
+    let powersTwo[10] = 1024;
+    let powersTwo[11] = 2048;
+    let powersTwo[12] = 4096;
+    let powersTwo[13] = 8192;
+    let powersTwo[14] = 16384;
+    let powersTwo[15] = 16384 + 16384;
+
+    return;
+  }
+
+  /** Erases the whole screen. */
+  function void clearScreen() {
+    do Screen.setColor(false);
+    do Screen.drawRectangle(0, 0, 511, 255);
+    do Screen.setColor(true);
+
+    return;
+  }
+
+  /** Sets the color to be used in further draw commands
+   *  where white = false, black = true. */
+  function void setColor(boolean b) {
+    let color = b;
+
+    return;
+  }
+
+  /** Draws the (x, y) pixel. */
+  function void drawPixel(int x, int y) {
+    var int row, col, bit, address, value;
+
+    let col = x;
+    let row = y;
+
+    let bit = (x & 15);
+
+    let address = 16384 + (row * 32) + (col / 16);
+
+	//Get current pixel
+    let value = Memory.peek(address);
+
+    if (color) { 
+      let value = value | powersTwo[bit]; 
+    } else { 
+      let value = value & ~powersTwo[bit];
+    }
+
+    do Memory.poke(address, value);
+
+    return;
+  }
+
+  /** Draws a line from (x1, y1) to (x2, y2). */
+  function void drawLine(int x1, int y1, int x2, int y2) {
+    var int a, b, a_inc, b_inc, dx, dy, criterion, temp;
+
+    let a = 0;
+    let b = 0;
+
+    if (x1 > x2) {
+      let temp = x1;
+      let x1 = x2;
+      let x2 = temp;
+
+      let temp = y1;
+      let y1 = y2;
+      let y2 = temp;
+    }
+
+    let dx = x2 - x1;
+    let dy = y2 - y1;
+
+     do Screen.drawPixel(a, b);
+
+    if (dy < 0) {
+      let b_inc = -1;
+    } else {
+      let b_inc = 1;
+    }
+
+    if (dy = 0) {
+      while (~(a = dx)) {
+        let a = a + 1;
+        do Screen.drawPixel(x1 + a, y1);
+      }
+
+      return;
+    }
+
+    if (dx = 0) {
+      while (~(b = dy)) {
+        let b = b + b_inc;
+        do Screen.drawPixel(x1, y1 + b);
+      }
+
+      return;
+    }
+
+    while ((a < dx) & (b < dy)) {
+
+      if ((a * dy) - (b * dx) < 0) {
+        let a = a + 1;
+      } else {
+        let b = b + 1;
+      }
+
+      do Screen.drawPixel(x1 + a, y1 + b);
+    }
+
+    while ((a < dx) & (b > dy)) {
+
+      if ((a * dy) - (b * dx) > 0) {
+        let a = a + 1;
+      } else {
+        let b = b - 1;
+      }
+
+      do Screen.drawPixel(x1 + a, y1 + b);
+    }
+
+    return;
+  }
+
+  /** Draws a filled rectangle where the top left corner
+   *  is (x1, y1) and the bottom right corner is (x2, y2). */
+  function void drawRectangle(int x1, int y1, int x2, int y2) {
+    var int a, b, dy, dx;
+
+    let a = 0;
+    let b = 0;
+    
+	let dy = y2 - y1;
+    let dx = x2 - x1;
+
+
+    while (b < dy) {
+      while (a < dx) {
+        do Screen.drawPixel(x1 + a, y1 + b);
+
+        let a = a + 1;
+      }
+
+      let a = 0;
+      let b = b + 1;
+    }
+
+    return;
+  }
+
+  /** Draws a filled circle of radius r around (cx, cy). */
+  function void drawCircle(int cx, int cy, int r) {
+    var int dy, sqrt, x1, x2, y;
+
+    let dy = -r;
+
+    while (~(dy > r)) {
+      let sqrt = Math.sqrt((r * r) - (dy * dy));
+
+      let x1 = cx - sqrt;
+      let x2 = cx + sqrt;
+
+      let y = cy + dy;
+
+      do Screen.drawLine(x1, y, x2, y);
+
+      let dy = dy + 1;
+    }
+
+    return;
+  }
+}
