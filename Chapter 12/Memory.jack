@@ -4,161 +4,156 @@
 // File name: projects/12/Memory.jack
 
 /**
- * This library provides two services: direct access to the computer's main
- * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
- * consists of 32,768 words, each holding a 16-bit binary number.
- */ 
+* This library provides two services: direct access to the computer's main
+* memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+* consists of 32,768 words, each holding a 16-bit binary number.
+*/ 
 class Memory {
 	static Array memory;
-    static Array freeList;
-    static Array memoryBottom;
+	static Array freeList;
+	static Array memoryBottom;
 
-    static int heapBottom;
-    static int heapBase;
+	static int heapBottom;
+	static int heapBase;
 
-    static int LENGTH;
-    static int NEXT;
+	static int LENGTH;
+	static int NEXT;
 
-    static int ALLOC_LENGTH;
+	static int ALLOC_LENGTH;
 
-    /** Initializes memory parameters. */
-    function void init() {
-        let heapBase = 2048;
-        let heapBottom = 16384;
+	/** Initializes memory parameters. */
+	function void init() {
+		let heapBase = 2048;
+		let heapBottom = 16384;
 
-        let memory = 0;
-        let freeList = heapBase;
-        let LENGTH = 0;
-        let NEXT = 1;
-        let freeList[LENGTH] = heapBottom - heapBase;
-        let freeList[NEXT] = null; 
+		let memory = 0;
+		let freeList = heapBase;
+		let LENGTH = 0;
+		let NEXT = 1;
+		let freeList[LENGTH] = heapBottom - heapBase;
+		let freeList[NEXT] = null; 
 
-        let ALLOC_LENGTH = -1;
+		let ALLOC_LENGTH = -1;
 
-        return;
-    }
+		return;
+	}
 
-    /** Returns the value of the main memory at the given address. */
-    function int peek(int address) {
-        return memory[address];
-    }
+	/** Returns the value of the main memory at the given address. */
+	function int peek(int address) {
+		return memory[address];
+	}
 
-    /** Sets the value of the main memory at this address
-     *  to the given value. */
-    function void poke(int address, int value) {
-        let memory[address] = value;
-        return;
-    }
+	/** Sets the value of the main memory at this address
+	*  to the given value. */
+	function void poke(int address, int value) {
+		let memory[address] = value;
+		return;
+	}
 
-    function Array bestFit(int size){
-        var Array curBlock, bestBlock;
-        var int bestSize,curSize;
+	function Array bestFit(int size){
+		var Array curBlock, bestBlock;
+		var int bestSize,curSize;
 
-        let bestBlock = null;
-        let bestSize = heapBottom - heapBase;
-        let curBlock = freeList;
+		let bestBlock = null;
+		let bestSize = heapBottom - heapBase;
+		let curBlock = freeList;
 
-        if(curBlock[NEXT] = null){
-            return curBlock;
-        }
+		if(curBlock[NEXT] = null){
+			return curBlock;
+		}
 
-        while(~(curBlock = null)){
+		while(~(curBlock = null)){
 
-            let curSize = curBlock[LENGTH] - 1;
+			let curSize = curBlock[LENGTH] - 1;
 
-            if(~(curSize < size) & (curSize < bestSize)){
+			if(~(curSize < size) & (curSize < bestSize)){
+				let bestBlock = curBlock;
+				let bestSize = curSize;
+			}
 
-                let bestBlock = curBlock;
-                let bestSize = curSize;
+			let curBlock = curBlock[NEXT];
+		}
 
-            }
+		return bestBlock;
+	}
 
-            let curBlock = curBlock[NEXT];
-        }
+	/** finds and allocates from the heap a memory block of the 
+	*  specified size and returns a reference to its base address. */
+	function int alloc(int size) {
+		var Array foundBlock,nextBlock,result;
 
-        return bestBlock;
-    }
+		let foundBlock = Memory.bestFit(size);
+		let result = foundBlock + 1;
 
-    /** finds and allocates from the heap a memory block of the 
-     *  specified size and returns a reference to its base address. */
-    function int alloc(int size) {
+		if(~(foundBlock = null)){
+			if(foundBlock[LENGTH] > (size + 3)){
+				let nextBlock = foundBlock + size + 1;
+				let nextBlock[NEXT] = foundBlock[NEXT];
+				let nextBlock[LENGTH] = foundBlock[LENGTH] - size - 1;
+				let result[ALLOC_LENGTH] = size + 1;
+				let freeList = nextBlock;
+			}else{
+				let nextBlock = foundBlock[NEXT];
+				let result[ALLOC_LENGTH] = foundBlock[LENGTH];
+			}
 
-        var Array foundBlock,nextBlock,result;
+			let foundBlock = nextBlock;
 
-        let foundBlock = Memory.bestFit(size);
-        let result = foundBlock + 1;
+		}
 
-        if(~(foundBlock = null)){
-            if(foundBlock[LENGTH] > (size + 3)){
-                let nextBlock = foundBlock + size + 1;
-                let nextBlock[NEXT] = foundBlock[NEXT];
-                let nextBlock[LENGTH] = foundBlock[LENGTH] - size - 1;
-                let result[ALLOC_LENGTH] = size + 1;
-                let freeList = nextBlock;
-            }else{
-                let nextBlock = foundBlock[NEXT];
-                let result[ALLOC_LENGTH] = foundBlock[LENGTH];
-            }
+		return result;
+	}
 
-            let foundBlock = nextBlock;
+	/** De-allocates the given object and frees its space. */
+	function void deAlloc(int o) {
+		var Array beforeBlock, afterBlock;
+		var int size;
 
-        }
+		let size = o[ALLOC_LENGTH];
+		let o = o - 1;
+		let beforeBlock = Memory.findPreFree(o);
 
-        return result;
-    }
+		if(beforeBlock = null){
 
-    /** De-allocates the given object and frees its space. */
-    function void deAlloc(int o) {
-        var Array beforeBlock, afterBlock;
-        var int size;
+			let o[LENGTH] = size;
+			let o[NEXT] = freeList;
+			let freeList = o;
 
-        let size = o[ALLOC_LENGTH];
-        let o = o - 1;
-        let beforeBlock = Memory.findPreFree(o);
+		}else{
+			if((beforeBlock + beforeBlock[LENGTH]) = o){
+				let beforeBlock[LENGTH] = beforeBlock[LENGTH] + size;
+				let o = beforeBlock;
+			}else{
+				let o[LENGTH] = size;
+				let o[NEXT] = beforeBlock[NEXT];
+				let beforeBlock[NEXT] = o;
+			}
+		}
 
-        if(beforeBlock = null){
+		if((o + o[LENGTH]) = o[NEXT]){
+			let afterBlock = o[NEXT];
+			let o[LENGTH] = o[LENGTH] + afterBlock[LENGTH];
+			let o[NEXT] = afterBlock[NEXT];
+		}
 
-            let o[LENGTH] = size;
-            let o[NEXT] = freeList;
-            let freeList = o;
+		return;
+	}    
 
-        }else{
+	function Array findPreFree(int object){
+		var Array preBlock;
 
-            if((beforeBlock + beforeBlock[LENGTH]) = o){
+		if(freeList > object){
+			return null;
+		}
 
-                let beforeBlock[LENGTH] = beforeBlock[LENGTH] + size;
-                let o = beforeBlock;
+		let preBlock = freeList;
 
-            }else{
-                let o[LENGTH] = size;
-                let o[NEXT] = beforeBlock[NEXT];
-                let beforeBlock[NEXT] = o;
-            }
-        }
+		while(~(preBlock[NEXT] = null) & (preBlock[NEXT] < object)){
+			let preBlock = preBlock[NEXT];
+		}
 
-        if((o + o[LENGTH]) = o[NEXT]){
-            let afterBlock = o[NEXT];
-            let o[LENGTH] = o[LENGTH] + afterBlock[LENGTH];
-            let o[NEXT] = afterBlock[NEXT];
-        }
+		return preBlock;
 
-        return;
-    }    
-
-    function Array findPreFree(int object){
-        var Array preBlock;
-
-        if(freeList > object){
-            return null;
-        }
-
-        let preBlock = freeList;
-        while(~(preBlock[NEXT] = null) & (preBlock[NEXT] < object)){
-            let preBlock = preBlock[NEXT];
-        }
-
-        return preBlock;
-
-    }
+	}
 }
 

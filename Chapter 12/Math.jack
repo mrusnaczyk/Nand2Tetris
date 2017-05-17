@@ -4,139 +4,141 @@
 // File name: projects/12/Math.jack
 
 /**
- * A library of commonly used mathematical functions.
- * Note: Jack compilers implement multiplication and division using OS method calls.
- */
+* A library of commonly used mathematical functions.
+* Note: Jack compilers implement multiplication and division using OS method calls.
+*/
 class Math {
-    static int powersTwo;
-    
-    /** Initializes the library. */
-    function void init() {
-        let powersTwo = Array.new(16);
-        let powersTwo[0] = 1;
-        let powersTwo[1] = 2;
-        let powersTwo[2] = 4;
-        let powersTwo[3] = 8;
-        let powersTwo[4] = 16;
-        let powersTwo[5] = 32;
-        let powersTwo[6] = 64;
-        let powersTwo[7] = 128;
-        let powersTwo[8] = 256;
-        let powersTwo[9] = 512;
-        let powersTwo[10] = 1024;
-        let powersTwo[11] = 2048;
-        let powersTwo[12] = 4096;
-        let powersTwo[13] = 8192;
-        let powersTwo[14] = 16384;
-        let powersTwo[15] = 16384+16384;
-        return;
+	static int powersTwo;
+
+	/** Initializes the library. */
+	function void init() {
+		let powersTwo = Array.new(16);
+		let powersTwo[0] = 1;
+		let powersTwo[1] = 2;
+		let powersTwo[2] = 4;
+		let powersTwo[3] = 8;
+		let powersTwo[4] = 16;
+		let powersTwo[5] = 32;
+		let powersTwo[6] = 64;
+		let powersTwo[7] = 128;
+		let powersTwo[8] = 256;
+		let powersTwo[9] = 512;
+		let powersTwo[10] = 1024;
+		let powersTwo[11] = 2048;
+		let powersTwo[12] = 4096;
+		let powersTwo[13] = 8192;
+		let powersTwo[14] = 16384;
+		let powersTwo[15] = 16384+16384;
+		return;
 	}
 
-    /** Returns the absolute value of x. */
-    function int abs(int x) {
+	/** Returns the absolute value of x. */
+	function int abs(int x) {
 		if( x < 0 ) {
-		        let x = -x;
-		    }
-		    return x;
+			let x = -x;
+		}
+		return x;
+	}
+
+	/** Returns the product of x and y. 
+	*  When a Jack compiler detects the multiplication operator '*' in the 
+	*  program's code, it handles it by invoking this method. In other words,
+	*  the Jack expressions x*y and multiply(x,y) return the same value.
+	*/
+	function int multiply(int x, int y) {
+		var int sum, shiftedX;
+		var int j;
+
+		let sum = 0;
+		let shiftedX = x;
+		let j = 0;
+
+		while( j < 16 ) {   
+			if(Math.bit(y, j)) {
+				let sum = sum + shiftedX;
+			}
+			let shiftedX = shiftedX + shiftedX;
+			let j = j + 1;
 		}
 
-    /** Returns the product of x and y. 
-     *  When a Jack compiler detects the multiplication operator '*' in the 
-     *  program's code, it handles it by invoking this method. In other words,
-     *  the Jack expressions x*y and multiply(x,y) return the same value.
-     */
-    function int multiply(int x, int y) {
-		var int sum, shiftedX;
-        var int j;
-        
-        let sum = 0;
-        let shiftedX = x;
-        let j = 0;
-        while( j < 16 ) {   
-            if(Math.bit(y, j)) {
-                let sum = sum + shiftedX;
-            }
-            let shiftedX = shiftedX + shiftedX;
-            let j = j + 1;
-        }
-        return sum;
-
-    }
-
-    /** Returns the integer part of x/y.
-     *  When a Jack compiler detects the multiplication operator '/' in the 
-     *  program's code, it handles it by invoking this method. In other words,
-     *  the Jack expressions x/y and divide(x,y) return the same value.
-     */
-    function int divide(int x, int y) {
-		var int q;
-		var int result;
-        var boolean pos;
-
-        let pos = ((x < 0) = (y < 0));
-
-        let x = Math.abs(x);
-        let y = Math.abs(y);
-
-        if(x < y){
-            return 0;
-        }
-
-        let q = Math.divide(x,y + y);
-        
-        if((x - (2 * q * y)) < y){
-            let result = Math.multiply(q, 2);
-        }else{
-            let result = Math.multiply(q, 2) + 1;
-        }
-
-        if(pos){
-            return result;
-        }else{
-            return -(result);
-        }
-    }
-
-    /** Returns the integer part of the square root of x. */
-    function int sqrt(int x) {
-    	var int y, j, t, tsq;
-
-        let y = 0;
-        let j = 7;
-
-        while(~(j < 0)){
-            let t = y + powersTwo[j];
-            let tsq = t * t;
-
-            if(~(tsq > x) & (tsq > 0)){
-                let y = t;
-            }
-            let j = j - 1;
-        }
-
-        return y;
-    }
-
-    /** Returns the greater number. */
-    function int max(int a, int b) {
-       if(a > b){
-            return a;
-       }
-
-        return b;
+		return sum;
 	}
 
-    /** Returns the smaller number. */
-    function int min(int a, int b) {
-        if(a < b){
-            return a;
-        }
+	/** Returns the integer part of x/y.
+	*  When a Jack compiler detects the multiplication operator '/' in the 
+	*  program's code, it handles it by invoking this method. In other words,
+	*  the Jack expressions x/y and divide(x,y) return the same value.
+	*/
+	function int divide(int x, int y) {
+		var int q;
+		var int result;
+		var boolean pos;
 
-        return b;
-    }
-	
+		let pos = ((x < 0) = (y < 0));
 
-    function boolean bit(int x, int j){
-        return ~((x & powersTwo[j]) = 0);
-    }
+		let x = Math.abs(x);
+		let y = Math.abs(y);
+
+		if(x < y){
+			return 0;
+		}
+
+		let q = Math.divide(x,y + y);
+
+		if((x - (2 * q * y)) < y){
+			let result = Math.multiply(q, 2);
+		}else{
+			let result = Math.multiply(q, 2) + 1;
+		}
+
+		if(pos){
+			return result;
+		}else{
+			return -(result);
+		}
+	}
+
+	/** Returns the integer part of the square root of x. */
+	function int sqrt(int x) {
+		var int y, j, t, tsq;
+
+		let y = 0;
+		let j = 7;
+
+		while(~(j < 0)){
+			let t = y + powersTwo[j];
+			let tsq = t * t;
+
+			if(~(tsq > x) & (tsq > 0)){
+				let y = t;
+			}
+
+			let j = j - 1;
+		}
+
+		return y;
+	}
+
+	/** Returns the greater number. */
+	function int max(int a, int b) {
+		if(a > b){
+			return a;
+		}
+
+		return b;
+	}
+
+	/** Returns the smaller number. */
+	function int min(int a, int b) {
+		if(a < b){
+			return a;
+		}
+
+		return b;
+	}
+
+
+	function boolean bit(int x, int j){
+		return ~((x & powersTwo[j]) = 0);
+	}
 }

@@ -4,48 +4,51 @@
 // File name: projects/12/Sys.jack
 
 /**
- * A library that supports various program execution services.
- */
+* A library that supports various program execution services.
+*/
 class Sys {
 
-    /** Performs all the initializations required by the OS. */
-    function void init() {
-        do Math.init();
-        do Output.init();
-        do Screen.init();
-        do Keyboard.init();
-        do Memory.init();
-        do Main.main();
-        do Sys.halt();
-        return;
-    }
+	/** Performs all the initializations required by the OS. */
+	function void init() {
+		do Math.init();
+		do Output.init();
+		do Screen.init();
+		do Keyboard.init();
+		do Memory.init();
+		do Main.main();
+		do Sys.halt();
+		return;
+	}
 
-    /** Halts execution. */
-    function void halt() {
-        while(true){}
-        return;
-    }
+	/** Halts execution. */
+	function void halt() {
+		while(true){}
+		return;
+	}
 
-    /** Waits approximately duration milliseconds and then returns. */
-    function void wait(int duration) {
-        var int i, j;
-        let i = 0;
-        while(i < duration) {
-            let j = 0;
-            while(j < 100){
-                let j = j + 1;
-            }
-            let i = i + 1;
-        }
-        return;
-    }
+	/** Waits approximately duration milliseconds and then returns. */
+	function void wait(int duration) {
+		var int i, j;
+		let i = 0;
 
-    /** Prints the given error code in the form "ERR<errorCode>", and halts. */
-    function void error(int errorCode) {
-        do Output.printString("Err");
-        do Output.printInt(errorCode);
-        do Sys.halt();
-        return;
-    }
+		while(i < duration) {
+			let j = 0;
+			while(j < 100){
+				let j = j + 1;
+			}
+			let i = i + 1;
+		}
+		
+		return;
+	}
+
+
+	function void error(int errorCode) {
+		do Output.printString("Err");
+		do Output.printInt(errorCode);
+		do Sys.halt();
+
+		return;
+	}
 
 }
